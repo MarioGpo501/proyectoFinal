@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - Catálogo de Revistas Académicas UNISON{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h1 class="h3 mb-0">Catálogo de Revistas Académicas</h1>
+            </div>
+            <div class="card-body">
+                <p class="lead">Bienvenido al Catálogo de Revistas Académicas de la Universidad de Sonora.</p>
+                <p>Este sistema permite explorar y buscar revistas académicas clasificadas por áreas y catálogos, con información detallada obtenida de SCIMAGO.</p>
+                
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="card text-center mb-3">
+                            <div class="card-body">
+                                <i class="fas fa-book fa-3x text-primary mb-3"></i>
+                                <h5 class="card-title">{{ total_revistas }}</h5>
+                                <p class="card-text">Revistas en el catálogo</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center mb-3">
+                            <div class="card-body">
+                                <i class="fas fa-tags fa-3x text-primary mb-3"></i>
+                                <h5 class="card-title">{{ total_areas }}</h5>
+                                <p class="card-text">Áreas temáticas</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center mb-3">
+                            <div class="card-body">
+                                <i class="fas fa-certificate fa-3x text-primary mb-3"></i>
+                                <h5 class="card-title">{{ total_catalogos }}</h5>
+                                <p class="card-text">Catálogos disponibles</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h4>¿Cómo usar este catálogo?</h4>
+                    <ul>
+                        <li><strong>Áreas:</strong> Explora revistas por área temática.</li>
+                        <li><strong>Catálogos:</strong> Explora revistas por catálogo (JCR, SCOPUS, etc.).</li>
+                        <li><strong>Explorar:</strong> Navega por las revistas alfabéticamente.</li>
+                        <li><strong>Búsqueda:</strong> Busca revistas por título.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Acceso rápido</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('areas') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-tags me-2"></i> Explorar por Áreas
+                    </a>
+                    <a href="{{ url_for('catalogos') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-certificate me-2"></i> Explorar por Catálogos
+                    </a>
+                    <a href="{{ url_for('explorar') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-search me-2"></i> Explorar Alfabéticamente
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">Información del proyecto</h5>
+            </div>
+            <div class="card-body">
+                <p>Este catálogo fue desarrollado como proyecto final para el curso de Programación Web.</p>
+                <p>Utiliza datos de SCIMAGO para proporcionar información detallada sobre revistas académicas.</p>
+                <p><strong>Tecnologías utilizadas:</strong></p>
+                <ul>
+                    <li>Python + Flask</li>
+                    <li>Bootstrap 5</li>
+                    <li>DataTables</li>
+                    <li>Web Scraping con BeautifulSoup</li>
+                </ul>
+                <a href="{{ url_for('creditos') }}" class="btn btn-sm btn-primary">Ver créditos</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
