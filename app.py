@@ -39,6 +39,54 @@ def inicio():
     
     # Obtener algunas estadísticas
     revistas_con_hindex = sum(1 for r in REVISTAS.values() if r.get('scimago_info', {}).get('h_index'))
+
+@app.route('/areas')
+def areas():
+    """Lista de áreas disponibles"""
+    return render_template('areas.html', areas=AREAS)
+
+@app.route('/area/<area>')
+def area_detalle(area):
+    """Revistas por área"""
+    revistas_area = []
+    
+    for titulo, datos in REVISTAS.items():
+        if area in datos.get('areas', []):
+            h_index = datos.get('scimago_info', {}).get('h_index', 'N/A')
+            revistas_area.append({
+                'titulo': titulo,
+                'h_index': h_index
+            })
+    
+    revistas_area.sort(key=lambda x: x['titulo'])
+    
+    return render_template('area_detalle.html', area=area, revistas=revistas_area, now=datetime.now())
+
+
+    # Funcionalidad extra: Login y guardado de revistas favoritas
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """Página de login"""
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        # Autenticación simple (en producción usar base de datos)
+        if username and password:
+            session['usuario'] = username
+            flash(f'Bienvenido, {username}!', 'success')
+            return redirect(url_for('inicio'))
+        else:
+            flash('Usuario o contraseña incorrectos', 'danger')
+    
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    """Cerrar sesión"""
+    session.pop('usuario', None)
+    flash('Sesión cerrada correctamente', 'success')
+    return redirect(url_for('inicio'))
     
     return render_template(
     'inicio.html', 
