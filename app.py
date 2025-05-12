@@ -3,7 +3,7 @@ import json
 import os
 import re
 from datetime import datetime
-from datetime import datetime
+
 
 app = Flask(__name__)
 app.secret_key = 'unison_revistas_academicas'  # Clave para sesiones
@@ -118,6 +118,14 @@ def explorar_letra(letra):
     
     return render_template('explorar_letras.html', letra=letra, revistas=revistas_letra)
 
+@app.route('/revista/<titulo>')
+def revista_detalle(titulo):
+    """Detalles de una revista específica"""
+    if titulo in REVISTAS:
+        return render_template('revista_detalle.html', titulo=titulo, datos=REVISTAS[titulo])
+    else:
+        flash('Revista no encontrada', 'danger')
+        return redirect(url_for('inicio'))
 
 @app.route('/buscar')
 def buscar():
@@ -147,6 +155,12 @@ def buscar():
     
     return render_template('buscar.html', resultados=resultados, query=query)
 
+@app.route('/creditos')
+def creditos():
+    """Página de créditos"""
+    return render_template('creditos.html')
+
+# Funcionalidad extra: Login y guardado de revistas favoritas
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """Página de login"""
@@ -171,6 +185,82 @@ def logout():
     flash('Sesión cerrada correctamente', 'success')
     return redirect(url_for('inicio'))
 
+@app.route('/favoritos')
+def favoritos():
+    """Revistas favoritas del usuario"""
+    if 'usuario' not in session:
+        flash('Debe iniciar sesión para ver sus favoritos', 'warning')
+        return redirect(url_for('login'))
+    
+    # Obtener favoritos del usuario (en producción usar base de datos)
+    favoritos = session.get('favoritos', [])
+    
+    revistas_favoritas = []
+    for titulo in favoritos:
+        if titulo in REVISTAS:
+            h_index = REVISTAS[titulo].get('scimago_info', {}).get('h_index', 'N/A')
+            revistas_favoritas.append({
+                'titulo': titulo,
+                'areas': REVISTAS[titulo].get('areas', []),
+                'catalogos': REVISTAS[titulo].get('catalogos', []),
+                'h_index': h_index
+            })
+    
+    return render_template('favoritos.html', favoritos=revistas_favoritas)
+
+@app.context_processor
+def injectar_fecha():
+    return {'now': datetime.now()}
+
+@app.route('/favorito/agregar/<titulo>')
+def agregar_favorito(titulo):
+    """Agregar revista a favoritos"""
+    if 'usuario' not in session:
+        flash('Debe iniciar sesión para agregar favoritos', 'warning')
+        return redirect(url_for('login'))
+    
+    if titulo not in REVISTAS:
+        flash('Revista no encontrada', 'danger')
+        return redirect(url_for('inicio'))
+    
+    # Obtener favoritos actuales
+    favoritos = session.get('favoritos', [])
+    
+    # Agregar si no está ya
+    if titulo not in favoritos:
+        favoritos.append(titulo)
+        session['favoritos'] = favoritos
+        flash(f'"{titulo}" agregada a favoritos', 'success')
+    else:
+        flash(f'"{titulo}" ya está en favoritos', 'info')
+    
+    return redirect(url_for('revista_detalle', titulo=titulo))
+
+@app.route('/favorito/eliminar/<titulo>')
+def eliminar_favorito(titulo):
+    """Eliminar revista de favoritos"""
+    if 'usuario' not in session:
+        flash('Debe iniciar sesión para gestionar favoritos', 'warning')
+        return redirect(url_for('login'))
+    
+    # Obtener favoritos actuales
+    favoritos = session.get('favoritos', [])
+    
+    # Eliminar si está
+    if titulo in favoritos:
+        favoritos.remove(titulo)
+        session['favoritos'] = favoritos
+        flash(f'"{titulo}" eliminada de favoritos', 'success')
+    
+    return redirect(url_for('favoritos'))
+
+# Filtros personalizados
+@app.template_filter('capitalize_each')
+def capitalize_each(s):
+    """Capitaliza cada palabra en una cadena"""
+    return ' '.join(word.capitalize() for word in s.split('_'))
+
 if __name__ == '__main__':
+    # Use environment variables for host and port if available
     port = int(os.environ.get("PORT", 5000))
     app.run(debug=True)

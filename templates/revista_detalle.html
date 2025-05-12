@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ titulo|capitalize }} - Catálogo de Revistas Académicas UNISON{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h1 class="h3 mb-0">Detalles de la Revista</h1>
+        <div>
+            {% if session.get('usuario') %}
+                {% if titulo in session.get('favoritos', []) %}
+                <a href="{{ url_for('eliminar_favorito', titulo=titulo) }}" class="btn btn-sm btn-warning me-2">
+                    <i class="fas fa-star me-1"></i> Quitar de Favoritos
+                </a>
+                {% else %}
+                <a href="{{ url_for('agregar_favorito', titulo=titulo) }}" class="btn btn-sm btn-outline-warning me-2">
+                    <i class="fas fa-star me-1"></i> Agregar a Favoritos
+                </a>
+                {% endif %}
+            {% endif %}
+            <button onclick="history.back()" class="btn btn-sm btn-outline-light">
+                <i class="fas fa-arrow-left me-1"></i> Volver
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <h2 class="mb-4 text-primary">{{ titulo|capitalize }}</h2>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Información Básica</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-tags me-2 text-primary"></i> Áreas:</span>
+                                <div>
+                                    {% for area in datos.areas %}
+                                    <a href="{{ url_for('area_detalle', area=area) }}" class="badge bg-primary text-decoration-none me-1">
+                                        {{ area|capitalize_each }}
+                                    </a>
+                                    {% endfor %}
+                                </div>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-certificate me-2 text-primary"></i> Catálogos:</span>
+                                <div>
+                                    {% for catalogo in datos.catalogos %}
+                                    <a href="{{ url_for('catalogo_detalle', catalogo=catalogo) }}" class="badge bg-warning text-dark text-decoration-none me-1">
+                                        {{ catalogo }}
+                                    </a>
+                                    {% endfor %}
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                {% if datos.get('scimago_info') %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Información de SCIMAGO</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            {% if datos.scimago_info.h_index %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-chart-line me-2 text-primary"></i> H-Index:</span>
+                                <span class="badge bg-primary rounded-pill">{{ datos.scimago_info.h_index }}</span>
+                            </li>
+                            {% endif %}
+                            
+                            {% if datos.scimago_info.issn %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-id-card me-2 text-primary"></i> ISSN:</span>
+                                <span>{{ datos.scimago_info.issn }}</span>
+                            </li>
+                            {% endif %}
+                            
+                            {% if datos.scimago_info.publisher %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-building me-2 text-primary"></i> Editorial:</span>
+                                <span>{{ datos.scimago_info.publisher }}</span>
+                            </li>
+                            {% endif %}
+                            
+                            {% if datos.scimago_info.publication_type %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-file-alt me-2 text-primary"></i> Tipo:</span>
+                                <span>{{ datos.scimago_info.publication_type }}</span>
+                            </li>
+                            {% endif %}
+                            
+                            {% if datos.scimago_info.sitio_web %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-globe me-2 text-primary"></i> Sitio Web:</span>
+                                <a href="{{ datos.scimago_info.sitio_web }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    Visitar <i class="fas fa-external-link-alt ms-1"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                            
+                            {% if datos.scimago_info.ultima_visita %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-calendar me-2 text-primary"></i> Última actualización:</span>
+                                <span>{{ datos.scimago_info.ultima_visita }}</span>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if datos.get('scimago_info') and datos.scimago_info.get('subject_area') %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Áreas Temáticas en SCIMAGO</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for area in datos.scimago_info.subject_area %}
+                    <div class="col-md-4 mb-2">
+                        <div class="badge bg-info text-dark p-2 w-100">
+                            <i class="fas fa-tag me-1"></i> {{ area }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if datos.get('scimago_info') and datos.scimago_info.get('widget') %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Enlace a SCIMAGO</h5>
+            </div>
+            <div class="card-body">
+                <a href="{{ datos.scimago_info.widget }}" target="_blank" class="btn btn-primary">
+                    <i class="fas fa-external-link-alt me-2"></i> Ver en SCIMAGO
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
