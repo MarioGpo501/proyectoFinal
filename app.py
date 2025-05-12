@@ -3,7 +3,7 @@ import json
 import os
 import re
 from datetime import datetime
-
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'unison_revistas_academicas'  # Clave para sesiones
@@ -39,6 +39,16 @@ def inicio():
     
     # Obtener algunas estadísticas
     revistas_con_hindex = sum(1 for r in REVISTAS.values() if r.get('scimago_info', {}).get('h_index'))
+    
+    return render_template(
+    'inicio.html', 
+    total_revistas=total_revistas,
+    total_areas=total_areas,
+    total_catalogos=total_catalogos,
+    revistas_con_hindex=revistas_con_hindex,
+    now=now  
+)
+
 
 @app.route('/areas')
 def areas():
@@ -62,8 +72,57 @@ def area_detalle(area):
     
     return render_template('area_detalle.html', area=area, revistas=revistas_area, now=datetime.now())
 
+@app.route('/catalogos')
+def catalogos():
+    """Lista de catálogos disponibles"""
+    return render_template('catalogos.html', catalogos=CATALOGOS)
 
-    # Funcionalidad extra: Login y guardado de revistas favoritas
+@app.route('/catalogo/<catalogo>')
+def catalogo_detalle(catalogo):
+    """Revistas por catálogo"""
+    revistas_catalogo = []
+    
+    for titulo, datos in REVISTAS.items():
+        if catalogo in datos.get('catalogos', []):
+            h_index = datos.get('scimago_info', {}).get('h_index', 'N/A')
+            revistas_catalogo.append({
+                'titulo': titulo,
+                'h_index': h_index
+            })
+    
+    revistas_catalogo.sort(key=lambda x: x['titulo'])
+    
+    return render_template('catalogo_detalle.html', catalogo=catalogo, revistas=revistas_catalogo)
+
+
+@app.route('/buscar')
+def buscar():
+    query = request.args.get('q', '').strip().lower()
+    
+    # Depuración - verifica en terminal lo que se está recibiendo
+    print(f"Término de búsqueda recibido: '{query}'")
+    print(f"Total revistas cargadas: {len(REVISTAS)}")
+    
+    if not query:
+        return render_template('buscar.html', resultados=[], query='')
+    
+    resultados = []
+    for titulo, datos in REVISTAS.items():
+        # Búsqueda insensible a mayúsculas y minúsculas
+        if query in titulo.lower():
+            resultados.append({
+                'titulo': titulo,
+                'h_index': datos.get('scimago_info', {}).get('h_index', 'N/A'),
+                'areas': datos.get('areas', []),
+                'catalogos': datos.get('catalogos', []),
+                'issn': datos.get('issn', 'N/A')  # Agrega más campos si es necesario
+            })
+    
+    # Depuración - verifica los resultados encontrados
+    print(f"Resultados encontrados: {len(resultados)}")
+    
+    return render_template('buscar.html', resultados=resultados, query=query)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """Página de login"""
@@ -87,15 +146,6 @@ def logout():
     session.pop('usuario', None)
     flash('Sesión cerrada correctamente', 'success')
     return redirect(url_for('inicio'))
-    
-    return render_template(
-    'inicio.html', 
-    total_revistas=total_revistas,
-    total_areas=total_areas,
-    total_catalogos=total_catalogos,
-    revistas_con_hindex=revistas_con_hindex,
-    now=now  
-)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
