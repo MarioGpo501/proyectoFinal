@@ -94,6 +94,30 @@ def catalogo_detalle(catalogo):
     
     return render_template('catalogo_detalle.html', catalogo=catalogo, revistas=revistas_catalogo)
 
+@app.route('/explorar')
+def explorar():
+    """Explorar revistas por letra inicial"""
+    return render_template('explorar.html')
+
+@app.route('/explorar/<letra>')
+def explorar_letra(letra):
+    """Revistas que comienzan con una letra específica"""
+    revistas_letra = []
+    
+    for titulo, datos in REVISTAS.items():
+        if titulo.lower().startswith(letra.lower()):
+            h_index = datos.get('scimago_info', {}).get('h_index', 'N/A')
+            revistas_letra.append({
+                'titulo': titulo,
+                'areas': datos.get('areas', []),
+                'catalogos': datos.get('catalogos', []),
+                'h_index': h_index
+            })
+    
+    revistas_letra.sort(key=lambda x: x['titulo'])
+    
+    return render_template('explorar_letras.html', letra=letra, revistas=revistas_letra)
+
 
 @app.route('/buscar')
 def buscar():
