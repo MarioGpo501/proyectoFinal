@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}Búsqueda: {{ query }} - Catálogo de Revistas Académicas UNISON{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h1 class="h3 mb-0">Resultados de búsqueda: "{{ query }}"</h1>
+    </div>
+    <div class="card-body">
+        {% if pagination %}
+        <p class="lead">Se encontraron {{ pagination.total_resultados }} revistas que coinciden con su búsqueda. Mostrando página {{ pagination.page }} de {{ pagination.total_paginas }}.</p>
+        {% else %}
+        <p class="lead">Ingrese un término de búsqueda para encontrar revistas.</p>
+        {% endif %}
+        
+        {% if resultados %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Título de la Revista</th>
+                        <th>Áreas</th>
+                        <th>Catálogos</th>
+                        <th>H-Index</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for revista in resultados %}
+                    <tr>
+                        <td>{{ revista.titulo|capitalize }}</td>
+                        <td>
+                            {% for area in revista.areas %}
+                            <a href="{{ url_for('area_detalle', area=area) }}" class="badge bg-primary text-decoration-none me-1">
+                                {{ area|capitalize_each }}
+                            </a>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for catalogo in revista.catalogos %}
+                            <a href="{{ url_for('catalogo_detalle', catalogo=catalogo) }}" class="badge bg-warning text-dark text-decoration-none me-1">
+                                {{ catalogo }}
+                            </a>
+                            {% endfor %}
+                        </td>
+                        <td>{{ revista.h_index }}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{{ url_for('revista_detalle', titulo=revista.titulo) }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-info-circle"></i> Detalles
+                                </a>
+                                {% if session.get('usuario') %}
+                                    {% if revista.titulo in session.get('favoritos', []) %}
+                                    <a href="{{ url_for('eliminar_favorito', titulo=revista.titulo) }}" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-star"></i> Quitar
+                                    </a>
+                                    {% else %}
+                                    <a href="{{ url_for('agregar_favorito', titulo=revista.titulo) }}" class="btn btn-sm btn-outline-warning">
+                                        <i class="far fa-star"></i> Favorito
+                                    </a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Paginación -->
+        {% if pagination and pagination.total_paginas > 1 %}
+        <nav aria-label="Navegación de resultados">
+            <ul class="pagination justify-content-center mt-4">
+                <!-- Botón Anterior -->
+                <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('buscar', q=query, page=pagination.prev_page) if pagination.has_prev else '#' }}" aria-label="Anterior">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                
+                <!-- Números de página -->
+                {% set start_page = [1, pagination.page - 2]|max %}
+                {% set end_page = [pagination.total_paginas, pagination.page + 2]|min %}
+                
+                {% if start_page > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('buscar', q=query, page=1) }}">1</a>
+                </li>
+                {% if start_page > 2 %}
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+                {% endif %}
+                {% endif %}
+                
+                {% for p in range(start_page, end_page + 1) %}
+                <li class="page-item {% if p == pagination.page %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('buscar', q=query, page=p) }}">{{ p }}</a>
+                </li>
+                {% endfor %}
+                
+                {% if end_page < pagination.total_paginas %}
+                {% if end_page < pagination.total_paginas - 1 %}
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+                {% endif %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('buscar', q=query, page=pagination.total_paginas) }}">{{ pagination.total_paginas }}</a>
+                </li>
+                {% endif %}
+                
+                <!-- Botón Siguiente -->
+                <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('buscar', q=query, page=pagination.next_page) if pagination.has_next else '#' }}" aria-label="Siguiente">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
+        
+        {% else %}
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            No se encontraron revistas que coincidan con "{{ query }}".
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

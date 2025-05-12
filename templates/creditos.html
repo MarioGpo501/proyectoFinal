@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Créditos - Catálogo de Revistas Académicas UNISON{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h1 class="h3 mb-0">Créditos del Proyecto</h1>
+    </div>
+    <div class="card-body">
+        <p class="lead">Este proyecto fue desarrollado como trabajo final para el curso de Programación Web.</p>
+        
+        <div class="row mt-4">
+            <div class="col-md-8">
+                <h4>Equipo de Desarrollo</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover datatable">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Expediente</th>
+                                <th>Rol</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Reemplazar con los nombres reales del equipo -->
+                            <tr>
+                                <td>Irlanda Karolina Atondo Ruiz</td>
+                                <td>A223215819</td>
+                                <td>Desarrollo FrontEnd</td>
+                            </tr>
+                            <tr>
+                                <td>Mario Alberto Martinez Gutierrez</td>
+                                <td>A223209711</td>
+                                <td>Web Scrapping y desarollo BackEnd</td>
+                            </tr>
+                            <tr>
+                                <td>Jorge Emilio Terrazas Serna</td>
+                                <td>A223200677</td>
+                                <td>Desarrollo BackEnd y Frontend</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <h4 class="mt-4">Tecnologías Utilizadas</h4>
+                <ul class="list-group">
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="fab fa-python fa-lg text-primary me-3"></i>
+                        <div>
+                            <strong>Python</strong>
+                            <p class="mb-0 text-muted">Lenguaje de programación principal</p>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="fab fa-flask fa-lg text-primary me-3"></i>
+                        <div>
+                            <strong>Flask</strong>
+                            <p class="mb-0 text-muted">Framework web para Python</p>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="fab fa-bootstrap fa-lg text-primary me-3"></i>
+                        <div>
+                            <strong>Bootstrap 5</strong>
+                            <p class="mb-0 text-muted">Framework CSS para el diseño responsivo</p>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="fas fa-table fa-lg text-primary me-3"></i>
+                        <div>
+                            <strong>DataTables</strong>
+                            <p class="mb-0 text-muted">Plugin para tablas interactivas</p>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="fas fa-spider fa-lg text-primary me-3"></i>
+                        <div>
+                            <strong>BeautifulSoup</strong>
+                            <p class="mb-0 text-muted">Biblioteca para web scraping y análisis HTML</p>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="fab fa-github fa-lg text-primary me-3"></i>
+                        <div>
+                            <strong>GitHub</strong>
+                            <p class="mb-0 text-muted">Control de versiones y colaboración</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Uso de Asistentes Digitales</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Para el desarrollo de este proyecto se utilizaron los siguientes asistentes digitales:</p>
+                        <ul>
+                            <li>GitHub Copilot: Asistencia en la escritura de código</li>
+                            <li>ChatGPT: Consultas sobre implementación y depuración</li>
+                        </ul>
+                        <p class="mb-0"><small>Nota: Los asistentes fueron utilizados como herramientas de apoyo, pero todo el código fue revisado y adaptado por el equipo.</small></p>
+                    </div>
+                </div>
+                
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Agradecimientos</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Agradecemos a:</p>
+                        <ul>
+                            <li>Federico Miguel Cirett Galan</li>
+                            <li>Universidad de Sonora por proporcionar los recursos necesarios</li>
+                            <li>SCIMAGO por la información académica disponible</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

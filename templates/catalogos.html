@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Catálogos - Catálogo de Revistas Académicas UNISON{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h1 class="h3 mb-0">Catálogos Disponibles</h1>
+    </div>
+    <div class="card-body">
+        <p class="lead">Seleccione un catálogo para ver las revistas asociadas:</p>
+        
+        <div class="row row-cols-1 row-cols-md-3 g-4 mt-2">
+            {% for catalogo in catalogos %}
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ catalogo }}</h5>
+                        <p class="card-text">
+                            <i class="fas fa-certificate text-primary me-2"></i>
+                            Catálogo de revistas
+                        </p>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <a href="{{ url_for('catalogo_detalle', catalogo=catalogo) }}" class="btn btn-primary">
+                            Ver revistas
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
