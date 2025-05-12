@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Explorar - Catálogo de Revistas Académicas UNISON{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h1 class="h3 mb-0">Explorar Revistas Alfabéticamente</h1>
+    </div>
+    <div class="card-body">
+        <p class="lead">Seleccione una letra para ver las revistas que comienzan con esa letra:</p>
+        
+        <div class="alfabeto text-center my-4">
+            {% for letra in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
+            <a href="{{ url_for('explorar_letra', letra=letra.lower()) }}" class="btn btn-outline-primary">{{ letra }}</a>
+            {% endfor %}
+            <a href="{{ url_for('explorar_letra', letra='0-9') }}" class="btn btn-outline-primary">0-9</a>
+        </div>
+        
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            Haga clic en una letra para ver todas las revistas que comienzan con esa letra.
+        </div>
+    </div>
+</div>
+{% endblock %}

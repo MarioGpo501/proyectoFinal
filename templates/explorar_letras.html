@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Revistas con {{ letra.upper() }} - Catálogo de Revistas Académicas UNISON{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h1 class="h3 mb-0">Revistas que comienzan con "{{ letra.upper() }}"</h1>
+        <a href="{{ url_for('explorar') }}" class="btn btn-sm btn-outline-light">
+            <i class="fas fa-arrow-left me-1"></i> Volver al Abecedario
+        </a>
+    </div>
+    <div class="card-body">
+        <p class="lead">Se encontraron {{ revistas|length }} revistas que comienzan con "{{ letra.upper() }}".</p>
+        
+        {% if revistas %}
+        <div class="table-responsive">
+            <table class="table table-hover datatable">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Título de la Revista</th>
+                        <th>Áreas</th>
+                        <th>Catálogos</th>
+                        <th>H-Index</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for revista in revistas %}
+                    <tr>
+                        <td>{{ revista.titulo|capitalize }}</td>
+                        <td>
+                            {% for area in revista.areas %}
+                            <a href="{{ url_for('area_detalle', area=area) }}" class="badge bg-primary text-decoration-none me-1">
+                                {{ area|capitalize_each }}
+                            </a>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for catalogo in revista.catalogos %}
+                            <a href="{{ url_for('catalogo_detalle', catalogo=catalogo) }}" class="badge bg-warning text-dark text-decoration-none me-1">
+                                {{ catalogo }}
+                            </a>
+                            {% endfor %}
+                        </td>
+                        <td>{{ revista.h_index }}</td>
+                        <td>
+                            <a href="{{ url_for('revista_detalle', titulo=revista.titulo) }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-info-circle"></i> Detalles
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            No se encontraron revistas que comiencen con "{{ letra.upper() }}".
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
